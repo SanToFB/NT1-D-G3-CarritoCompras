@@ -1,5 +1,3 @@
-using System;
-
 namespace CarritoCompras_NT1.Models
 {
     public class ErrorViewModel

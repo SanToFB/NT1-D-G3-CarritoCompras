@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CarritoCompras_NT1.Models
 {
@@ -20,6 +18,6 @@ namespace CarritoCompras_NT1.Models
 
         public List<Producto> Productos { get; set; }
 
-        
+
     }
 }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CarritoCompras_NT1.Models
 {
@@ -16,7 +14,7 @@ namespace CarritoCompras_NT1.Models
 
         [ForeignKey(nameof(Cliente))]
         public Guid ClienteID { get; set; }
-        public Cliente Cliente{ get; set; }
+        public Cliente Cliente { get; set; }
 
         public List<CarritoItem> CarritoItems { get; set; }
 

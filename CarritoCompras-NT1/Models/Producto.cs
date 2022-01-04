@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CarritoCompras_NT1.Models
 {
-       public class Producto
+    public class Producto
     {
-        [NotMapped]
+
         const string mensajeError = "El campo {0} es requerido";
 
         [Key]
@@ -27,12 +24,12 @@ namespace CarritoCompras_NT1.Models
         [MinLength(4, ErrorMessage = "{0} debe tener un mínimo de {1} caracteres")]
         public string Descripcion { get; set; }
 
-        public bool Activo{ get; set; }
+        public bool Activo { get; set; }
 
         [Required(ErrorMessage = mensajeError)]
         [Range(0, 999999.99, ErrorMessage = "El {0} se debe encontrar entre {1} y {2}")]
         [Display(Name = "Precio Vigente")]
-        public float PrecioVigente{ get; set; }
+        public float PrecioVigente { get; set; }
 
         [ForeignKey(nameof(Categoria))]
         public Guid CategoriaID { get; set; }

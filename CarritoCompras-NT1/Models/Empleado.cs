@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CarritoCompras_NT1.Models
 {
-    public class Empleado: Usuario
+    public class Empleado : Usuario
     {
-        [NotMapped]
+
         const string mensajeError = "El campo {0} es requerido";
 
-        
+
         [Required(ErrorMessage = mensajeError)]
         [MaxLength(30, ErrorMessage = "El campo {0} admite un máximo de {1} caracteres")]
         [MinLength(2, ErrorMessage = "{0} debe tener un mínimo de {1} caracteres")]
@@ -28,6 +23,6 @@ namespace CarritoCompras_NT1.Models
         [Display(Name = "Dirección")]
         public string Direccion { get; set; }
 
-       
+
     }
 }
