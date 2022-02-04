@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarritoCompras_NT1.Models
 {
     public class Sucursal
     {
-
+        [NotMapped]
         const string mensajeError = "El campo {0} es requerido";
 
         [Key]

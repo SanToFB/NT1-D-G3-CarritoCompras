@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CarritoCompras_NT1.DataBase;
+using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CarritoCompras_NT1.DataBase;
-using CarritoCompras_NT1.Models;
 
 namespace CarritoCompras_NT1.Controllers
 {
@@ -34,7 +32,9 @@ namespace CarritoCompras_NT1.Controllers
             }
 
             var sucursal = await _context.Sucursales
+                .Include(s => s.StockItems)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (sucursal == null)
             {
                 return NotFound();
@@ -50,8 +50,6 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Sucursales/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Email,Telefono,Direccion")] Sucursal sucursal)

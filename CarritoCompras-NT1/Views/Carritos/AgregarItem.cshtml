@@ -1,0 +1,63 @@
+﻿@model CarritoCompras_NT1.Models.CarritoItem
+
+@{
+    ViewData["Title"] = "Agregar Producto";
+}
+
+<h1>Agregar Producto</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AgregarItem">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CarritoID" />
+            <input type="hidden" asp-for="ProductoID" />
+            <div class="form-group">
+                <input class="form-control" readonly value="@Model.Producto.Nombre" />
+            </div>
+            <div class="form-group">
+                <label asp-for="ValorUnitario" class="control-label"></label>
+                <input asp-for="ValorUnitario" id="ValorUnitario" readonly class="form-control" />
+                <span asp-validation-for="ValorUnitario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cantidad" class="control-label"></label>
+                <input asp-for="Cantidad" class="form-control" id="Cantidad" onchange="calcular()" min="0" max="@ViewBag.CantidadTotal" />
+                <span asp-validation-for="Cantidad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subtotal" class="control-label"></label>
+                <input asp-for="Subtotal" id="Subtotal" readonly class="form-control" />
+                <span asp-validation-for="Subtotal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Confirmar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--
+<script>
+    $("#Cantidad").on("change", function () {
+        var subtotal = $("#Cantidad").val() * $("#ValorUnitario").val()
+        $("#Subtotal").val(subtotal);
+    })
+</script>
+  -->
+
+
+<script type="text/javascript">
+    function calcular() {
+            var valor = parseFloat(document.getElementById("#ValorUnitario").val()),
+            cant = parseFloat(document.getElementById("#Cantidad").val());
+
+            document.getElementById("#subtotal").val() = cant * valor;
+    }
+</script>
+  
+
+<div>
+    <a class="nav-link text-dark" asp-controller="Home" asp-action="Index" asp-route-id="5">Volver</a>
+</div>

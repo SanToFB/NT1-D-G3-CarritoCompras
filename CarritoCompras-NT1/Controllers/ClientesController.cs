@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CarritoCompras_NT1.DataBase;
+using CarritoCompras_NT1.Extensions;
+using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CarritoCompras_NT1.DataBase;
-using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarritoCompras_NT1.Controllers
 {
+
     public class ClientesController : Controller
     {
         private readonly Contexto _context;
@@ -20,21 +21,22 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Clientes
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Clientes.ToListAsync());
+            return View(_context.Clientes.ToList());
         }
 
-        // GET: Clientes/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        // GET: Clientes/Details/5          
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var cliente = _context.Clientes
+                .FirstOrDefault(m => m.Id == id);
+
             if (cliente == null)
             {
                 return NotFound();
@@ -49,32 +51,60 @@ namespace CarritoCompras_NT1.Controllers
             return View();
         }
 
-        // POST: Clientes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Apellido,Telefono,DNI,Id,Nombre,Email,FechaAlta,Password,UserName")] Cliente cliente)
+        public IActionResult Create(Cliente cliente, string pass)
         {
+                try
+                {
+                    pass.ValidarPassword();
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(nameof(Cliente.Password), e.Message);
+                }
+
+            if (_context.Empleados.Any(emple => emple.UserName == cliente.UserName) ||
+               (_context.Clientes.Any(clien => clien.UserName == cliente.UserName)) ||
+               (_context.Administradores.Any(admin => admin.UserName == cliente.UserName)))
+            {
+                ModelState.AddModelError(nameof(cliente.UserName), "El nombre de Usuario ya se encuentra utilizado");
+            }
+
             if (ModelState.IsValid)
             {
                 cliente.Id = Guid.NewGuid();
+                cliente.FechaAlta = DateTime.Now;
+                cliente.Password = pass.Encriptar();
+                cliente.Carrito = new Carrito()
+                {
+                    Id = Guid.NewGuid(),
+                    ClienteID = cliente.Id,
+                    Activo = true,
+                    Subtotal = 0
+                };
                 _context.Add(cliente);
-                await _context.SaveChangesAsync();
+                _context.Add(cliente.Carrito);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             return View(cliente);
         }
 
+
+
         // GET: Clientes/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+
+       // [Authorize(Roles = ("Administrador, Cliente"))]
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = _context.Clientes.Find(id);
+
             if (cliente == null)
             {
                 return NotFound();
@@ -82,13 +112,24 @@ namespace CarritoCompras_NT1.Controllers
             return View(cliente);
         }
 
-        // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+       // [Authorize(Roles = ("Administrador, Cliente"))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Apellido,Telefono,DNI,Id,Nombre,Email,FechaAlta,Password,UserName")] Cliente cliente)
+        public IActionResult Edit(Guid id, Cliente cliente, string pass)
         {
+            if (!string.IsNullOrWhiteSpace(pass))
+            {
+                try
+                {
+                    pass.ValidarPassword();
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(nameof(Cliente.Password), e.Message);
+                }
+            }
+
             if (id != cliente.Id)
             {
                 return NotFound();
@@ -98,8 +139,22 @@ namespace CarritoCompras_NT1.Controllers
             {
                 try
                 {
-                    _context.Update(cliente);
-                    await _context.SaveChangesAsync();
+                    ViewBag.nombre = cliente.Nombre;
+                    ViewBag.apellido = cliente.Apellido;
+                    ViewBag.userName = cliente.UserName;
+
+                    var clienteBD = _context.Clientes.FirstOrDefault(c => c.Id == id);
+
+                    clienteBD.Email = cliente.Email;
+                    clienteBD.Telefono = cliente.Telefono;
+                    clienteBD.Direccion = cliente.Direccion;
+
+                    if (!string.IsNullOrWhiteSpace(pass))
+                    {
+                        clienteBD.Password = pass.Encriptar();
+                    }
+
+                    _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,15 +173,15 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Clientes/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var cliente = _context.Clientes
+                .FirstOrDefault(m => m.Id == id);
             if (cliente == null)
             {
                 return NotFound();
@@ -138,11 +193,11 @@ namespace CarritoCompras_NT1.Controllers
         // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = _context.Clientes.Find(id);
             _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 

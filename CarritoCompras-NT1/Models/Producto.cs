@@ -6,7 +6,7 @@ namespace CarritoCompras_NT1.Models
 {
     public class Producto
     {
-
+        [NotMapped]
         const string mensajeError = "El campo {0} es requerido";
 
         [Key]
@@ -32,6 +32,7 @@ namespace CarritoCompras_NT1.Models
         public float PrecioVigente { get; set; }
 
         [ForeignKey(nameof(Categoria))]
+        [Display(Name = "Categoría")]
         public Guid CategoriaID { get; set; }
         public Categoria Categoria { get; set; }
 

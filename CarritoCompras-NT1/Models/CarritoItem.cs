@@ -6,13 +6,11 @@ namespace CarritoCompras_NT1.Models
 {
     public class CarritoItem
     {
-
+        [NotMapped]
         const string mensajeError = "El campo {0} es requerido";
 
         [Key]
         public Guid Id { get; set; }
-
-        public bool Activo { get; set; }
 
         [ForeignKey(nameof(Carrito))]
         public Guid CarritoID { get; set; }

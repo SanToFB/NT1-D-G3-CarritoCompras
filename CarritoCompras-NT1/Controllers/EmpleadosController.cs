@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CarritoCompras_NT1.DataBase;
+using CarritoCompras_NT1.Extensions;
+using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CarritoCompras_NT1.DataBase;
-using CarritoCompras_NT1.Models;
 
 namespace CarritoCompras_NT1.Controllers
 {
+    //[Authorize(Roles = ("Administrador, Empleado"))]
     public class EmpleadosController : Controller
     {
         private readonly Contexto _context;
@@ -54,13 +55,37 @@ namespace CarritoCompras_NT1.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        /*
         public async Task<IActionResult> Create([Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Empleado empleado)
+       */
+        public IActionResult Create(Empleado empleado, string pass)
         {
+            if (!string.IsNullOrWhiteSpace(pass))
+            {
+                try
+                {
+                    pass.ValidarPassword();
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(nameof(empleado.Password), e.Message);
+                }
+            }
+
+            if (_context.Empleados.Any(emple => emple.UserName == empleado.UserName) ||
+               (_context.Clientes.Any(clien => clien.UserName == empleado.UserName)) ||
+               (_context.Administradores.Any(admin => admin.UserName == empleado.UserName)))
+            {
+                ModelState.AddModelError(nameof(empleado.UserName), "El nombre de Usuario ya se encuentra utilizado");
+            }
+
             if (ModelState.IsValid)
             {
                 empleado.Id = Guid.NewGuid();
+                empleado.FechaAlta = DateTime.Now;
+                empleado.Password = pass.Encriptar();
                 _context.Add(empleado);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             return View(empleado);
@@ -87,8 +112,24 @@ namespace CarritoCompras_NT1.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public IActionResult Edit(Guid id, Empleado empleado, string pass)
+        /*
+         * 
         public async Task<IActionResult> Edit(Guid id, [Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Empleado empleado)
+        */
         {
+            if (!string.IsNullOrWhiteSpace(pass))
+            {
+                try
+                {
+                    pass.ValidarPassword();
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(nameof(empleado.Password), e.Message);
+                }
+            }
+
             if (id != empleado.Id)
             {
                 return NotFound();
@@ -98,8 +139,18 @@ namespace CarritoCompras_NT1.Controllers
             {
                 try
                 {
-                    _context.Update(empleado);
-                    await _context.SaveChangesAsync();
+                    Empleado empleadoBd = _context.Empleados.Find(id);
+
+                    empleadoBd.Direccion = empleado.Direccion;
+                    empleadoBd.Email = empleado.Email;
+                    empleadoBd.Telefono = empleado.Telefono;
+
+                    if (!string.IsNullOrWhiteSpace(pass))
+                    {
+                        empleadoBd.Password = pass.Encriptar();
+                    }
+
+                    _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {

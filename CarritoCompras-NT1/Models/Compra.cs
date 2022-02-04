@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,5 +18,11 @@ namespace CarritoCompras_NT1.Models
         public Carrito Carrito { get; set; }
 
         public float Total { get; set; }
+
+        public DateTime FechaCompra { get; set; }
+
+        [ForeignKey(nameof(Sucursal))]
+        public Guid SucursalId { get; set; }
+        public Sucursal Sucursal { get; set; }
     }
 }

@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+using CarritoCompras_NT1.Extensions;
 
 namespace CarritoCompras_NT1.Migrations
 {
@@ -8,10 +9,37 @@ namespace CarritoCompras_NT1.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Administradores",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Nombre = table.Column<string>(maxLength: 30, nullable: false),
+                    Email = table.Column<string>(nullable: false),
+                    FechaAlta = table.Column<DateTime>(nullable: false),
+                    Password = table.Column<byte[]>(nullable: true),
+                    Direccion = table.Column<string>(nullable: false),
+                    UserName = table.Column<string>(maxLength: 20, nullable: false),
+                    Apellido = table.Column<string>(maxLength: 30, nullable: false),
+                    Telefono = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Administradores", x => x.Id);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Administradores",
+                columns: new[] { "Id", "Nombre", "Email", "FechaAlta", "Password", "UserName", "Apellido", "Telefono", "Direccion" },
+                values: new object[] {Guid.NewGuid(), "Carlos", "cSantana@hotmail.com", DateTime.Now, "CSantana77".Encriptar()
+                ,"CSantana77", "Santana","4747-2323", "San Lorenzo 1969" }
+                );
+
+            migrationBuilder.CreateTable(
                 name: "Categorias",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    Nombre = table.Column<string>(maxLength: 20, nullable: false),
                     Descripcion = table.Column<string>(maxLength: 30, nullable: false)
                 },
                 constraints: table =>
@@ -27,7 +55,8 @@ namespace CarritoCompras_NT1.Migrations
                     Nombre = table.Column<string>(maxLength: 30, nullable: false),
                     Email = table.Column<string>(nullable: false),
                     FechaAlta = table.Column<DateTime>(nullable: false),
-                    Password = table.Column<string>(nullable: false),
+                    Password = table.Column<byte[]>(nullable: true),
+                    Direccion = table.Column<string>(nullable: false),
                     UserName = table.Column<string>(maxLength: 20, nullable: false),
                     Apellido = table.Column<string>(maxLength: 30, nullable: false),
                     Telefono = table.Column<string>(nullable: false),
@@ -46,12 +75,11 @@ namespace CarritoCompras_NT1.Migrations
                     Nombre = table.Column<string>(maxLength: 30, nullable: false),
                     Email = table.Column<string>(nullable: false),
                     FechaAlta = table.Column<DateTime>(nullable: false),
-                    Password = table.Column<string>(nullable: false),
+                    Password = table.Column<byte[]>(nullable: true),
+                    Direccion = table.Column<string>(nullable: false),
                     UserName = table.Column<string>(maxLength: 20, nullable: false),
                     Apellido = table.Column<string>(maxLength: 30, nullable: false),
-                    Telefono = table.Column<string>(nullable: false),
-                    Direccion = table.Column<string>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false)
+                    Telefono = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -146,7 +174,6 @@ namespace CarritoCompras_NT1.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Activo = table.Column<bool>(nullable: false),
                     CarritoID = table.Column<Guid>(nullable: false),
                     ProductoID = table.Column<Guid>(nullable: false),
                     Cantidad = table.Column<int>(nullable: false),
@@ -177,7 +204,9 @@ namespace CarritoCompras_NT1.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     ClienteID = table.Column<Guid>(nullable: false),
                     CarritoID = table.Column<Guid>(nullable: false),
-                    Total = table.Column<float>(nullable: false)
+                    Total = table.Column<float>(nullable: false),
+                    FechaCompra = table.Column<DateTime>(nullable: false),
+                    SucursalId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -192,6 +221,12 @@ namespace CarritoCompras_NT1.Migrations
                         name: "FK_Compras_Clientes_ClienteID",
                         column: x => x.ClienteID,
                         principalTable: "Clientes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Compras_Sucursales_SucursalId",
+                        column: x => x.SucursalId,
+                        principalTable: "Sucursales",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -209,8 +244,7 @@ namespace CarritoCompras_NT1.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Carritos_ClienteID",
                 table: "Carritos",
-                column: "ClienteID",
-                unique: true);
+                column: "ClienteID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Compras_CarritoID",
@@ -221,6 +255,11 @@ namespace CarritoCompras_NT1.Migrations
                 name: "IX_Compras_ClienteID",
                 table: "Compras",
                 column: "ClienteID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Compras_SucursalId",
+                table: "Compras",
+                column: "SucursalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Productos_CategoriaID",
@@ -240,6 +279,9 @@ namespace CarritoCompras_NT1.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Administradores");
+
             migrationBuilder.DropTable(
                 name: "CarritoItems");
 

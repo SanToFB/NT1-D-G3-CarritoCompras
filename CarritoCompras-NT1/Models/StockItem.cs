@@ -6,7 +6,7 @@ namespace CarritoCompras_NT1.Models
 {
     public class StockItem
     {
-
+        [NotMapped]
         const string mensajeError = "El campo {0} es requerido";
 
         [Key]

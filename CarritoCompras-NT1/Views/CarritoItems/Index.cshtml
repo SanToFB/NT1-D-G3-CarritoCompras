@@ -1,65 +1,67 @@
 ﻿@model IEnumerable<CarritoCompras_NT1.Models.CarritoItem>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Mi Carrito";
+    Guid carritoId = ViewBag.CarritoId;
 }
 
-<h1>Index</h1>
+<h1>Mi Carrito</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-controller="Carritos" asp-action="LimpiarCarrito" class="btn btn-danger">Eliminar todos los productos</a>
+    <!--asp-route-id="carritoId"-->
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Activo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Carrito)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Producto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cantidad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorUnitario)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Subtotal)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Carrito.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Producto.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cantidad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorUnitario)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Subtotal)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-hover table-striped table-sm">
+        <thead>
+            <tr>
+                <!--
+                <th>
+                    Html.DisplayNameFor(model => model.Carrito)
+                </th>-->
+                <th>
+                    @Html.DisplayNameFor(model => model.Producto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cantidad)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ValorUnitario)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Subtotal)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <!--
+                    <td>
+                        Html.DisplayFor(modelItem => item.Carrito.Id)
+                    </td>-->
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Producto.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cantidad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ValorUnitario)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Subtotal)
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Quitar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>Total: "@ViewBag.Total"</p>
+    <a asp-controller="Compras" asp-action="ConfirmarCompra" class="btn btn-primary">Confirmar Compra</a>
+    <!--asp-route-id="TempData["CarritoId"]"-->
+</div>

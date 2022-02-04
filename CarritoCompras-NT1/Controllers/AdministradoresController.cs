@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CarritoCompras_NT1.DataBase;
+using CarritoCompras_NT1.Extensions;
+using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CarritoCompras_NT1.DataBase;
-using CarritoCompras_NT1.Models;
 
 namespace CarritoCompras_NT1.Controllers
 {
+    [Authorize(Roles = nameof(Rol.Administrador))]
     public class AdministradoresController : Controller
     {
         private readonly Contexto _context;
@@ -54,13 +55,33 @@ namespace CarritoCompras_NT1.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Administrador administrador)
+        public IActionResult Create(Administrador administrador, string pass)
         {
+            /*public async Task<IActionResult> Create([Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Administrador administrador)
+            {*/
+
+            try
+            {
+                pass.ValidarPassword();
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(nameof(Administrador.Password), e.Message);
+            }
+            if (_context.Administradores.Any(admin => admin.UserName == administrador.UserName) ||
+                (_context.Empleados.Any(empleado => empleado.UserName == administrador.UserName)))
+            {
+                ModelState.AddModelError(nameof(Administrador.UserName), "El nombre de Ususario ya se encuentra utilizado");
+            }
+
+
             if (ModelState.IsValid)
             {
                 administrador.Id = Guid.NewGuid();
+                administrador.FechaAlta = DateTime.Now;
+                administrador.Password = pass.Encriptar();
                 _context.Add(administrador);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             return View(administrador);
@@ -85,10 +106,27 @@ namespace CarritoCompras_NT1.Controllers
         // POST: Administradores/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+
+        /*public async Task<IActionResult> Edit(Guid id, [Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Administrador administrador)*/
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Administrador administrador)
+        public IActionResult Edit(Guid id, Administrador administrador, string pass)
         {
+            if (!string.IsNullOrWhiteSpace(pass))
+            {
+                try
+                {
+                    pass.ValidarPassword();
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(nameof(Administrador.Password), e.Message);
+                }
+            }
+
+
             if (id != administrador.Id)
             {
                 return NotFound();
@@ -98,8 +136,20 @@ namespace CarritoCompras_NT1.Controllers
             {
                 try
                 {
-                    _context.Update(administrador);
-                    await _context.SaveChangesAsync();
+                    Administrador adminBD = _context.Administradores.Find(id);
+
+                    adminBD.Nombre = administrador.Nombre;
+                    adminBD.Apellido = administrador.Apellido;
+                    adminBD.Direccion = administrador.Direccion;
+                    adminBD.Email = administrador.Email;
+                    adminBD.Telefono = administrador.Telefono;
+
+                    if (!string.IsNullOrWhiteSpace(pass))
+                    {
+                        adminBD.Password = pass.Encriptar();
+                    }
+
+                    _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -135,7 +185,7 @@ namespace CarritoCompras_NT1.Controllers
             return View(administrador);
         }
 
-        // POST: Administradores/Delete/5
+        // POST: Administradores/Delete/5   
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -145,6 +195,7 @@ namespace CarritoCompras_NT1.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool AdministradorExists(Guid id)
         {

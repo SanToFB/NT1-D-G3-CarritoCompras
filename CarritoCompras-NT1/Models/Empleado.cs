@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarritoCompras_NT1.Models
 {
     public class Empleado : Usuario
     {
+        public override Rol Rol => Rol.Empleado;
 
+        [NotMapped]
         const string mensajeError = "El campo {0} es requerido";
 
 
@@ -19,9 +22,6 @@ namespace CarritoCompras_NT1.Models
         [Display(Name = "Teléfono")]
         public string Telefono { get; set; }
 
-        [Required(ErrorMessage = mensajeError)]
-        [Display(Name = "Dirección")]
-        public string Direccion { get; set; }
 
 
     }

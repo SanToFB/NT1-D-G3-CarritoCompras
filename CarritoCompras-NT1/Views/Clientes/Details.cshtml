@@ -1,26 +1,25 @@
 ﻿@model CarritoCompras_NT1.Models.Cliente
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle";
 }
 
-<h1>Details</h1>
+<h1>Detalles</h1>
 
 <div>
-    <h4>Cliente</h4>
-    <hr />
+    
     <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nombre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Apellido)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Apellido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefono)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefono)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DNI)
@@ -29,10 +28,10 @@
             @Html.DisplayFor(model => model.DNI)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
+            @Html.DisplayNameFor(model => model.Telefono)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
+            @Html.DisplayFor(model => model.Telefono)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
@@ -47,12 +46,6 @@
             @Html.DisplayFor(model => model.FechaAlta)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.UserName)
         </dt>
         <dd class = "col-sm-10">
@@ -61,6 +54,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+    <a asp-action="Index">Cancelar</a>
 </div>

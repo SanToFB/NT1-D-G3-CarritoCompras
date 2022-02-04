@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CarritoCompras_NT1.DataBase;
+using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CarritoCompras_NT1.DataBase;
-using CarritoCompras_NT1.Models;
 
 namespace CarritoCompras_NT1.Controllers
 {
@@ -18,7 +16,7 @@ namespace CarritoCompras_NT1.Controllers
         {
             _context = context;
         }
-
+        //[Authorize(Roles = ("Administrador,Empleado"))] Solo para teenr aca
         // GET: Categorias
         public async Task<IActionResult> Index()
         {
@@ -50,11 +48,9 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Categorias/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Descripcion")] Categoria categoria)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion")] Categoria categoria)
         {
             if (ModelState.IsValid)
             {
@@ -83,8 +79,6 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Categorias/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Descripcion")] Categoria categoria)

@@ -1,48 +1,56 @@
 ﻿@model CarritoCompras_NT1.Models.Producto
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles";
 }
 
-<h1>Details</h1>
+<h1>Detalles</h1>
 
 <div>
-    <h4>Producto</h4>
-    <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nombre)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Nombre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Descripcion)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Descripcion)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Activo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Activo)
-        </dd>
-        <dt class = "col-sm-2">
+        @if (User.IsInRole("Empleado") || (User.IsInRole("Administrador")))
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Activo)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Activo)
+            </dd>
+        }
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PrecioVigente)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PrecioVigente)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Categoria)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Categoria.Descripcion)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if (User.IsInRole("Administrador") || (User.IsInRole("Empleado")))
+    {
+        <a class="btn btn-info" asp-action="Index">Volver</a>
+        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+    }
+    else
+    {
+        <a class="btn btn-danger" asp-action="IndexClientes">Volver</a>
+    }
 </div>

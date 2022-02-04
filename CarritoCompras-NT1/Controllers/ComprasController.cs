@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CarritoCompras_NT1.DataBase;
+using CarritoCompras_NT1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CarritoCompras_NT1.DataBase;
-using CarritoCompras_NT1.Models;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CarritoCompras_NT1.Controllers
 {
@@ -18,7 +18,7 @@ namespace CarritoCompras_NT1.Controllers
         {
             _context = context;
         }
-
+        
         // GET: Compras
         public async Task<IActionResult> Index()
         {
@@ -26,8 +26,62 @@ namespace CarritoCompras_NT1.Controllers
             return View(await contexto.ToListAsync());
         }
 
-        // GET: Compras/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        // GET: Compras Por Fecha
+        public async Task<IActionResult> IndexFecha(DateTime? fechaDesde, DateTime fechaHasta)
+        {
+            var contexto = _context.Compras.Include(c => c.Carrito).Include(c => c.Cliente)
+                .Where(c => c.FechaCompra >= fechaDesde && c.FechaCompra <= fechaHasta);
+
+            if ( User.IsInRole("Cliente"))
+            {
+                var clienteId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                //var comprasCliente = contexto.Where(c => c.ClienteID == clienteId);
+                contexto = contexto.Where(c => c.ClienteID == clienteId);
+
+            }
+            return View(await contexto.ToListAsync());
+        }
+
+        // GET: ConfirmarCompra
+        public IActionResult ConfirmarCompra(Guid? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var clienteId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            Cliente cliente = _context.Clientes.FirstOrDefault(c => c.Id == clienteId);
+            // Controlamos que el carritoId recibido por parámetro sea del usuario y esté activo
+            Carrito carrito = _context.Carritos.FirstOrDefault(c => c.ClienteID == clienteId && c.Activo);
+            if(carrito == null)
+            {
+                return NotFound();
+            }
+
+            //Validamos Stock cuando se agrega un carritoItem.
+
+            Compra compra = new Compra()
+            {
+                Id = Guid.NewGuid(),
+                Cliente = cliente,
+                Carrito = carrito,
+                FechaCompra = DateTime.Now,
+                Total = carrito.Subtotal,
+               //Sucursal 
+            };
+
+            //_context.Add(compra);
+
+            //
+
+            return View();
+        }
+
+
+
+            // GET: Compras/Details/5
+            public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
@@ -55,8 +109,6 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Compras/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ClienteID,CarritoID,Total")] Compra compra)
@@ -92,8 +144,6 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Compras/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,ClienteID,CarritoID,Total")] Compra compra)
@@ -163,5 +213,22 @@ namespace CarritoCompras_NT1.Controllers
         {
             return _context.Compras.Any(e => e.Id == id);
         }
+
+        private bool hayStock(Guid sucursalId, Guid productoId)
+        {
+            Sucursal sucursal = _context.Sucursales.FirstOrDefault(s => s.Id == sucursalId);
+            bool hay = false;
+            foreach(StockItem stock in sucursal.StockItems)
+            {
+                if(stock.ProductoID == productoId)
+                {
+                    hay = true;
+                    break;
+                }
+            }
+            return hay;
+        }
+
+
     }
 }

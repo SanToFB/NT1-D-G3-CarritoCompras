@@ -10,30 +10,39 @@
     <h4>Sucursal</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nombre)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Nombre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Telefono)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Telefono)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Direccion)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Direccion)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StockItems)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.StockItems)
+        </dd>
+
+        <!-- Vemos si StockItems lo dejo o no, mismo ver en el controller Include(s=>s.stockitems... thenI s=>s.producto)-->
+        
     </dl>
 </div>
 <div>

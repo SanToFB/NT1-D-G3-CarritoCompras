@@ -1,0 +1,50 @@
+﻿@model IEnumerable<CarritoCompras_NT1.Models.Producto>
+
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<h1>Productos</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrecioVigente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Categoria)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioVigente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Categoria.Descripcion)
+                </td>
+                <td>
+                    <a class="btn btn-outline-info btn-sm ml-1" asp-action="Details" asp-route-id="@item.Id">Ver Detalles</a>
+                    <a class="btn btn-outline-success btn-sm ml-1" asp-controller="Carritos" asp-action="AgregarItem" asp-route-id="@item.Id">Agregar al carrito</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

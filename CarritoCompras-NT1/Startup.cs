@@ -1,4 +1,5 @@
 using CarritoCompras_NT1.DataBase;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,20 @@ namespace CarritoCompras_NT1
 
         public IConfiguration Configuration { get; }
 
+        public static void ConfigCookie(CookieAuthenticationOptions options)
+        {
+            //Rutas para Ingreso(login), Rechazo, Desloguearse. 
+            options.LoginPath = "/Accesos/Ingresar";
+            options.AccessDeniedPath = "/Accesos/Denegado";
+            options.LogoutPath = "/Accesos/Salir";
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Habilitamos que se pueda autenticar por cookies.
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(ConfigCookie);
+
             services.AddDbContext<Contexto>(options => options.UseSqlite("filename=eComerce.db"));
             //services.AddDbContext<Contexto>(options => options.UseSqlServer(Configuration.GetConnectionString("Comerce.db")));
 
@@ -44,6 +56,8 @@ namespace CarritoCompras_NT1
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -52,6 +66,9 @@ namespace CarritoCompras_NT1
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            //Para usar TempData.
+            app.UseCookiePolicy();
         }
     }
 }
