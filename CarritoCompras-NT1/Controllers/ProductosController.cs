@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CarritoCompras_NT1.Controllers
 {
-    [AllowAnonymous]
+    [Authorize(Roles = ("Administrador,Empleado"))]
     public class ProductosController : Controller
     {
         private readonly Contexto _context;
@@ -22,7 +22,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Productos
-        [AllowAnonymous]
+        [Authorize(Roles = ("Administrador,Empleado"))]
         public async Task<IActionResult> Index()
         {
             var contexto = _context.Productos.Include(p => p.Categoria);
@@ -40,7 +40,6 @@ namespace CarritoCompras_NT1.Controllers
             return View(await productos.ToListAsync());
         }
 
-        // ver si hace falta aclarar: p.Activo = true;
         [AllowAnonymous]
         public IActionResult FiltrarCategoria (Guid? id)
         {
@@ -48,9 +47,7 @@ namespace CarritoCompras_NT1.Controllers
             {
                 var producto = _context.Productos.Where(p => p.CategoriaID == id && p.Activo);
 
-                ViewBag.Categorias = new SelectList(_context.Categorias, nameof(Categoria.Id), nameof(Categoria.Nombre), id);
-                ViewBag.CategoriaId = id;
-
+                ViewBag.CategoriaNombre = _context.Categorias.Find(id).Nombre;
                 return View(producto.ToList());
             }
 

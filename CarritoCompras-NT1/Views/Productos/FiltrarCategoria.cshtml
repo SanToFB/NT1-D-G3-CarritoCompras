@@ -4,7 +4,8 @@
     ViewData["Title"] = "Categorias";
 }
 
-<h1>Categorias</h1>
+<h1>@ViewBag.CategoriaNombre</h1>
+
 
 <table class="table">
     <thead>
@@ -59,7 +60,7 @@
     }
     else
     {
-    <a class="btn btn-danger btn-sm ml-1" asp-controller="Productos" asp-action="IndexClientes">Volver</a>
+    <a class="btn btn-primary btn-sm ml-1" asp-controller="Productos" asp-action="IndexClientes">Mas Productos</a>
     }
 
 </foot>
