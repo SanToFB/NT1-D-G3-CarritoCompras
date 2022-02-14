@@ -1,5 +1,6 @@
 ﻿using CarritoCompras_NT1.DataBase;
 using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,14 +17,15 @@ namespace CarritoCompras_NT1.Controllers
         {
             _context = context;
         }
-        //[Authorize(Roles = ("Administrador,Empleado"))] Solo para teenr aca
         // GET: Categorias
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Categorias.ToListAsync());
         }
 
         // GET: Categorias/Details/5
+        [Authorize(Roles = ("Administrador,Empleado"))]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -42,12 +44,14 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Categorias/Create
+        [Authorize(Roles = ("Administrador,Empleado"))]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Categorias/Create
+        [Authorize(Roles = ("Administrador,Empleado"))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion")] Categoria categoria)
@@ -63,6 +67,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Categorias/Edit/5
+        [Authorize(Roles = ("Administrador,Empleado"))]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -79,9 +84,10 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Categorias/Edit/5
+        [Authorize(Roles = ("Administrador,Empleado"))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Descripcion")] Categoria categoria)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion")] Categoria categoria)
         {
             if (id != categoria.Id)
             {
@@ -110,8 +116,9 @@ namespace CarritoCompras_NT1.Controllers
             }
             return View(categoria);
         }
-
-        // GET: Categorias/Delete/5
+        // GET: Categorias/Delete/5 No se pueden eliminar por consigna. Pongo solo Admin criterio personal =>
+        // => Cosa de que si se ingreso mal haya un rol que lo pueda corregir.
+        [Authorize(Roles = ("Administrador"))]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -130,6 +137,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Categorias/Delete/5
+        [Authorize(Roles = ("Administrador"))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

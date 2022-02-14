@@ -5,7 +5,12 @@
 }
 
 <h1>Productos</h1>
-
+<div>
+    @if (User.IsInRole("Cliente"))
+    {
+        <a class="btn btn-info" asp-controller="CarritoItems" asp-action="Index" asp-route-id="@TempData["CarritoId"]">Mi Carrito</a>
+    }
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -16,7 +21,7 @@
                 @Html.DisplayNameFor(model => model.Descripcion)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PrecioVigente)
+                Precio
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Categoria)
@@ -35,14 +40,14 @@
                     @Html.DisplayFor(modelItem => item.Descripcion)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.PrecioVigente)
+                    $@item.PrecioVigente.ToString("N2")
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Categoria.Descripcion)
+                    @Html.DisplayFor(modelItem => item.Categoria.Nombre)
                 </td>
                 <td>
                     <a class="btn btn-outline-info btn-sm ml-1" asp-action="Details" asp-route-id="@item.Id">Ver Detalles</a>
-                    <a class="btn btn-outline-success btn-sm ml-1" asp-controller="Carritos" asp-action="AgregarItem" asp-route-id="@item.Id">Agregar al carrito</a>
+                    <a class="btn btn-success btn-sm ml-1" asp-controller="Carritos" asp-action="AgregarItem" asp-route-id="@item.Id">Agregar al carrito</a>
                 </td>
             </tr>
         }

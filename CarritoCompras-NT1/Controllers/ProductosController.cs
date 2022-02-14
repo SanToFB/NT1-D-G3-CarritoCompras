@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CarritoCompras_NT1.Controllers
 {
-   
+    [AllowAnonymous]
     public class ProductosController : Controller
     {
         private readonly Contexto _context;
@@ -22,7 +22,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Productos
-        //[Authorize(Roles = ("Administrador,Empleado"))]   NO DEJAR ESPACIO ENTRE LA COMA
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var contexto = _context.Productos.Include(p => p.Categoria);
@@ -31,6 +31,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         //Get: Productos para clientes.y sin loguear cosa que los lleve al Login al seleccionar
+        [AllowAnonymous]
         public async Task<IActionResult> IndexClientes()
         {
             var productos = _context.Productos.Include(p => p.Categoria)
@@ -40,6 +41,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // ver si hace falta aclarar: p.Activo = true;
+        [AllowAnonymous]
         public IActionResult FiltrarCategoria (Guid? id)
         {
             if(id != null)
@@ -57,6 +59,7 @@ namespace CarritoCompras_NT1.Controllers
 
 
         // GET: Productos/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -84,7 +87,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Productos/Create
-        //[Authorize(Roles = ("Administrador,Empleado"))]
+        [Authorize(Roles = ("Administrador,Empleado"))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Activo,PrecioVigente,CategoriaID")] Producto producto)
@@ -174,7 +177,8 @@ namespace CarritoCompras_NT1.Controllers
             return View(producto);
         }
 
-        // POST: Productos/Delete/5
+        // POST: Productos/Delete/5 Dejo solo que el administrador tenga la facultad de eliminar un producto.
+        // Ya que considero util que ante cualquier inconveniente se tenga acceso a esta funcion por parte del Admin. 
         [Authorize(Roles = "Administrador")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -192,19 +196,5 @@ namespace CarritoCompras_NT1.Controllers
             return _context.Productos.Any(e => e.Id == id);
         }
 
-        /*
-        private List<Producto> ProductosEnStock()
-        {
-            var stock = _context.StockItems.Where(s=>s.Cantidad > 0).ToList();
-            List<Producto> productos = new List<Producto>();
-
-            foreach(StockItem item in stock)
-            {
-                productos.Add(item.Producto);
-            }
-
-            return productos;   
-        }
-        */
     }
 }

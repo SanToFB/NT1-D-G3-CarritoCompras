@@ -3,65 +3,52 @@
 @{
     ViewData["Title"] = "Mi Carrito";
     Guid carritoId = ViewBag.CarritoId;
+    float total = @ViewBag.Total;
 }
 
 <h1>Mi Carrito</h1>
 
-<p>
-    <a asp-controller="Carritos" asp-action="LimpiarCarrito" class="btn btn-danger">Eliminar todos los productos</a>
-    <!--asp-route-id="carritoId"-->
-</p>
-<div class="table-responsive">
-    <table class="table table-hover table-striped table-sm">
-        <thead>
-            <tr>
-                <!--
-                <th>
-                    Html.DisplayNameFor(model => model.Carrito)
-                </th>-->
-                <th>
-                    @Html.DisplayNameFor(model => model.Producto)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Cantidad)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ValorUnitario)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Subtotal)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <!--
-                    <td>
-                        Html.DisplayFor(modelItem => item.Carrito.Id)
-                    </td>-->
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Producto.Nombre)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Cantidad)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ValorUnitario)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Subtotal)
-                    </td>
-                    <td>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Quitar</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <p>Total: "@ViewBag.Total"</p>
-    <a asp-controller="Compras" asp-action="ConfirmarCompra" class="btn btn-primary">Confirmar Compra</a>
-    <!--asp-route-id="TempData["CarritoId"]"-->
+
+
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-4">
+            <div class="card border-success mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Producto.Nombre</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <span class="text-primary font-weight-bolder">Descripción: </span> @item.Producto.Descripcion
+                        </li>
+                        <li class="list-group-item">
+                            <span class="text-primary font-weight-bolder">Precio Unitario: </span> @item.ValorUnitario.ToString("N2")
+                        </li>
+                        <li class="list-group-item">
+                            <span class="text-primary font-weight-bolder">Cantidad: </span> @item.Cantidad
+                        </li>
+                        <li class="list-group-item">
+                            <span class="text-primary font-weight-bolder">Subtotal: </span> $@item.Subtotal.ToString("N2")
+                        </li>
+                    </ul>
+                    <div class="card-footer bg-transparent border-success">
+                        <a asp-controller="CarritoItems" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info">
+                            Modificar Cantidad
+                        </a>
+                        <a asp-controller="CarritoItems" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                            Quitar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div>
+    <p>Total: "$@total.ToString("N2")"</p>
+    <a asp-controller="Compras" asp-action="Compra" asp-route-id="@carritoId" class="btn btn-primary">
+        <i class="bi bi-cash-coin"></i> Comprar
+    </a>
+    <a asp-controller="Carritos" asp-action="LimpiarCarrito"  asp-route-id="@carritoId" class="btn btn-danger">Eliminar todos los productos</a>
 </div>

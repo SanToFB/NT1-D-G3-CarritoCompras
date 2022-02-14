@@ -12,6 +12,7 @@ using System.Security.Claims;
 
 namespace CarritoCompras_NT1.Controllers
 {
+    [AllowAnonymous]
     public class AccesosController : Controller
     {
         private readonly Contexto _context;
@@ -101,7 +102,6 @@ namespace CarritoCompras_NT1.Controllers
                 }
             }
 
-            // Completo estos dos campos para poder retornar a la vista en caso de errores.
             ViewBag.Error = "Usuario o contraseña incorrectos";
             ViewBag.UserName = username;
             TempData[_Return_Url] = returnUrl;

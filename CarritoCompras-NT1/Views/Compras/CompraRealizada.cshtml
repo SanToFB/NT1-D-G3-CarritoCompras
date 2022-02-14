@@ -1,0 +1,48 @@
+﻿@model CarritoCompras_NT1.Models.Compra
+@{
+    ViewData["Title"] = "CompraRealizada";
+    Sucursal sucursal = ViewBag.Sucursal;
+}
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Felicitaciones!! </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body class="bg-dark text-white py-5" style="--bs-bg-opacity: .70;">
+    <div class="container py-5">
+        <div class="row">
+            <p>
+                <span class="text-primary"> <b> @ViewBag.NombreCliente </b></span> has realizado la compra con exito!.
+            </p>
+
+            <div class="col-md-10">
+                <h3>Felicitaciones!!! Su Compra Se Realizo Con Exito!</h3>
+                <p>
+                    Desde Las Totoras, Agradecemos por su compra.
+                    <br />El codigo de tu compra es: <span class="text-white"> <b> @ViewBag.CompraId</b></span>
+                    <br />Podras retirar tus Productos, a partir de mañana, por: <span class="text-info"> <b> @ViewBag.NombreSucursal</b></span> de lunes a sabados de 9 a 20hs
+                    <br />Recuerda que la direccion es: <span class="text-info"> <b> @ViewBag.DireccionSucursal</b></span>
+                    <br /> Ante cualquier duda podes encontrarnos en nuestro telefono: @sucursal.Telefono o por Email: @sucursal.Email
+                    <br />Te esperamos!!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer" class="text-md-right">
+        <img src="~/images/klipartz.com (1).png" style="height:50px;" />
+        ----LAS TOTORAS, Showroom----
+    </div>
+    <div class="form-group">
+        <a asp-action="IndexClientes" asp-controller="Productos" class="btn btn-success">Continuar</a>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-primary">Volver Home</a>
+    </div>
+</body>
+
+
+</html>
+

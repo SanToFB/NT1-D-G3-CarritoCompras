@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace CarritoCompras_NT1.Controllers
 {
@@ -21,12 +22,14 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Clientes
+        [Authorize(Roles = ("Administrador,Empleado"))]
         public IActionResult Index()
         {
             return View(_context.Clientes.ToList());
         }
 
-        // GET: Clientes/Details/5          
+        // GET: Clientes/Details/5      
+        [Authorize(Roles = ("Administrador,Empleado"))]
         public IActionResult Details(Guid? id)
         {
             if (id == null)
@@ -46,11 +49,13 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: Clientes/Create
+        [AllowAnonymous]
         public IActionResult Create()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Cliente cliente, string pass)
@@ -76,15 +81,24 @@ namespace CarritoCompras_NT1.Controllers
                 cliente.Id = Guid.NewGuid();
                 cliente.FechaAlta = DateTime.Now;
                 cliente.Password = pass.Encriptar();
-                cliente.Carrito = new Carrito()
+
+                _context.Add(cliente);
+                _context.SaveChanges();
+
+                Carrito carrito = new Carrito()
                 {
                     Id = Guid.NewGuid(),
                     ClienteID = cliente.Id,
                     Activo = true,
                     Subtotal = 0
                 };
-                _context.Add(cliente);
-                _context.Add(cliente.Carrito);
+
+                _context.Add(carrito);
+                _context.SaveChanges();
+
+                cliente.Carritos.Add(carrito);
+
+                _context.Update(cliente);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
@@ -94,8 +108,7 @@ namespace CarritoCompras_NT1.Controllers
 
 
         // GET: Clientes/Edit/5
-
-       // [Authorize(Roles = ("Administrador, Cliente"))]
+        [Authorize(Roles = ("Cliente,Administrador"))]
         public IActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -113,7 +126,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
 
-       // [Authorize(Roles = ("Administrador, Cliente"))]
+        [Authorize(Roles = ("Cliente,Administrador"))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, Cliente cliente, string pass)
@@ -167,12 +180,13 @@ namespace CarritoCompras_NT1.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Home");
             }
             return View(cliente);
         }
 
         // GET: Clientes/Delete/5
+        [Authorize(Roles = ("Administrador,Empleado"))]
         public IActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -191,6 +205,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Clientes/Delete/5
+        [Authorize(Roles = ("Administrador,Empleado"))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)

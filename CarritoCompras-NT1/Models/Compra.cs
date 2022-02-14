@@ -9,6 +9,7 @@ namespace CarritoCompras_NT1.Models
         [Key]
         public Guid Id { get; set; }
 
+        [Display(Name = "Cliente")]
         [ForeignKey(nameof(Cliente))]
         public Guid ClienteID { get; set; }
         public Cliente Cliente { get; set; }
@@ -21,6 +22,7 @@ namespace CarritoCompras_NT1.Models
 
         public DateTime FechaCompra { get; set; }
 
+        [Display(Name = "Sucursal")]
         [ForeignKey(nameof(Sucursal))]
         public Guid SucursalId { get; set; }
         public Sucursal Sucursal { get; set; }

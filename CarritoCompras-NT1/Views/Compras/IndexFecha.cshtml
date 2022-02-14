@@ -1,0 +1,168 @@
+﻿@model IEnumerable<CarritoCompras_NT1.Models.Compra>
+
+@{
+    ViewData["Title"] = "IndexFecha";
+    var sucursales = ViewBag.Sucursales;
+}
+
+<h1>
+    Compras @if (User.IsInRole("Cliente"))
+    {
+        @ViewBag.Cliente.Nombre @ViewBag.Cliente.Apellido
+    }
+</h1>
+
+@if (User.IsInRole("Empleado") || (User.IsInRole("Administrador")))
+{
+    <form method="get" action="IndexFecha">
+        <input name="fechaDesde" type="date" />
+        <input name="fechaHasta" type="date" />
+        <input name="submit" value="Filtrar" type="submit" />
+    </form>
+}
+
+@if (User.IsInRole("Cliente"))
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sucursal)
+                </th>
+                <th>
+                    Direccion
+                </th>
+                <th>
+                    Telefono
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Fecha de Compra
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
+                <th>
+                    Codigo de Compra
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @foreach (Sucursal sucursal in sucursales)
+                    {
+                        if (item.Sucursal.Id == sucursal.Id)
+                        {
+                            <td>
+                                @sucursal.Nombre
+                            </td>
+                            <td>
+                                @sucursal.Direccion
+                            </td>
+                            <td>
+                                @sucursal.Telefono
+                            </td>
+                            <td>
+                                @sucursal.Email
+                            </td>
+                        }
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaCompra)
+                    </td>
+                    <td>
+                        $@item.Total.ToString("N2")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-primary">Home</a>
+        <a asp-action="IndexClientes" asp-controller="Productos" class="btn btn-success">Productos</a>
+    </div>
+}
+
+
+@if (User.IsInRole("Empleado") || (User.IsInRole("Administrador")))
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cliente.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cliente.Apellido)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cliente.DNI)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sucursal)
+                </th>
+                <th>
+                    Fecha de Compra
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
+                <th>
+                    Codigo de Compra
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cliente.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cliente.Apellido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cliente.DNI)
+                    </td>
+                    @foreach (Sucursal sucursal in sucursales)
+                    {
+                        if (item.Sucursal.Id == sucursal.Id)
+                        {
+                            <td>
+                                @sucursal.Nombre
+                            </td>
+                        }
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaCompra)
+                    </td>
+                    <td>
+                        $@item.Total.ToString("N2")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+<div>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-primary">Home</a>
+    <a asp-action="Index" asp-controller="Productos" class="btn btn-success">Productos</a>
+</div>
+
+}
+
+

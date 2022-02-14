@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CarritoCompras_NT1.Controllers
 {
-    //[Authorize(Roles = ("Administrador, Empleado"))]
+    [Authorize(Roles = ("Administrador, Empleado"))]
     public class EmpleadosController : Controller
     {
         private readonly Contexto _context;
@@ -51,13 +51,8 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Empleados/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        /*
-        public async Task<IActionResult> Create([Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Empleado empleado)
-       */
         public IActionResult Create(Empleado empleado, string pass)
         {
             if (!string.IsNullOrWhiteSpace(pass))
@@ -108,15 +103,9 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Empleados/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, Empleado empleado, string pass)
-        /*
-         * 
-        public async Task<IActionResult> Edit(Guid id, [Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Empleado empleado)
-        */
         {
             if (!string.IsNullOrWhiteSpace(pass))
             {

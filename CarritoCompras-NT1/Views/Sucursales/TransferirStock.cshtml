@@ -1,0 +1,33 @@
+﻿@model CarritoCompras_NT1.ViewsModel.Sucursales
+@{
+    ViewData["Title"] = "TransferirStock";
+}
+
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"> Transfiriendo Stock Entre Sucursales</h5>
+                <form asp-action="TransferirStock">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="text-danger">
+                        @ViewBag.Error
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="sucursal1Id" class="control-label">Sucursal Origen</label>
+                        <select asp-for="sucursal1Id" class="form-control" asp-items="ViewBag.SucursalesId1"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="sucursal2Id" class="control-label">Sucursal Destino</label>
+                        <select asp-for="sucursal2Id" class="form-control" asp-items="ViewBag.SucursalesId2"></select>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Confirmar" class="btn btn-success" />
+                        <a asp-action="Index" class="btn btn-danger">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

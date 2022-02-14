@@ -12,16 +12,18 @@ namespace CarritoCompras_NT1.Models
         [Key]
         public Guid Id { get; set; }
 
+        [Display(Name = "Sucursal")]
         [ForeignKey(nameof(Sucursal))]
         public Guid SucursalID { get; set; }
         public Sucursal Sucursal { get; set; }
 
+        [Display(Name = "Producto")]
         [ForeignKey(nameof(Producto))]
         public Guid ProductoID { get; set; }
         public Producto Producto { get; set; }
 
         [Required(ErrorMessage = mensajeError)]
-        [Range(0, 100, ErrorMessage = "La {0} se debe encontrar entre {1} y {2}")]
+        [Range(1, 100, ErrorMessage = "La {0} se debe encontrar entre {1} y {2}")]
         public int Cantidad { get; set; }
     }
 }

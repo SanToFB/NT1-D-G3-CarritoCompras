@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Agregar Producto";
+    var reenvio = ViewBag.Reenvio;
+
 }
 
 <h1>Agregar Producto</h1>
@@ -14,50 +16,45 @@
             <input type="hidden" asp-for="CarritoID" />
             <input type="hidden" asp-for="ProductoID" />
             <div class="form-group">
-                <input class="form-control" readonly value="@Model.Producto.Nombre" />
+                @if (reenvio != 1)
+                {
+                    <input class="form-control" readonly value="@Model.Producto.Nombre" />
+                }
+                else
+                {
+                    <input class="form-control" readonly value="@ViewBag.NombreProducto" />
+                }
             </div>
             <div class="form-group">
                 <label asp-for="ValorUnitario" class="control-label"></label>
-                <input asp-for="ValorUnitario" id="ValorUnitario" readonly class="form-control" />
+                <input asp-for="ValorUnitario" id="valorUnitarioId" readonly class="form-control" />
                 <span asp-validation-for="ValorUnitario" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Cantidad" class="control-label"></label>
-                <input asp-for="Cantidad" class="form-control" id="Cantidad" onchange="calcular()" min="0" max="@ViewBag.CantidadTotal" />
+                <input asp-for="Cantidad" class="form-control" id="cantidadId" onchange="calcular()" min="0" />  <!--max="ViewBag.CantidadTotal"-->
                 <span asp-validation-for="Cantidad" class="text-danger"></span>
+                <span class="text-danger">@ViewBag.Error</span>
             </div>
             <div class="form-group">
                 <label asp-for="Subtotal" class="control-label"></label>
-                <input asp-for="Subtotal" id="Subtotal" readonly class="form-control" />
+                <input asp-for="Subtotal" id="subtotalId" readonly class="form-control" />
                 <span asp-validation-for="Subtotal" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Confirmar" class="btn btn-primary" />
+                <a class="btn btn-danger" asp-controller="Productos" asp-action="IndexClientes">Volver</a>
             </div>
         </form>
     </div>
 </div>
 
-<!--
-<script>
-    $("#Cantidad").on("change", function () {
-        var subtotal = $("#Cantidad").val() * $("#ValorUnitario").val()
-        $("#Subtotal").val(subtotal);
-    })
-</script>
-  -->
-
 
 <script type="text/javascript">
     function calcular() {
-            var valor = parseFloat(document.getElementById("#ValorUnitario").val()),
-            cant = parseFloat(document.getElementById("#Cantidad").val());
-
-            document.getElementById("#subtotal").val() = cant * valor;
+        document.getElementById("subtotalId").value = 
+            document.getElementById("cantidadId").value * document.getElementById("valorUnitarioId").value;
     }
 </script>
-  
 
-<div>
-    <a class="nav-link text-dark" asp-controller="Home" asp-action="Index" asp-route-id="5">Volver</a>
-</div>
+

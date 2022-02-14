@@ -344,7 +344,7 @@ namespace CarritoCompras_NT1.Migrations
             modelBuilder.Entity("CarritoCompras_NT1.Models.Carrito", b =>
                 {
                     b.HasOne("CarritoCompras_NT1.Models.Cliente", "Cliente")
-                        .WithMany()
+                        .WithMany("Carritos")
                         .HasForeignKey("ClienteID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

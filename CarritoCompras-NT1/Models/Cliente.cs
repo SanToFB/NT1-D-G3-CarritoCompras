@@ -28,7 +28,7 @@ namespace CarritoCompras_NT1.Models
 
         public List<Compra> Compras { get; set; }
 
-        public Carrito Carrito { get; set; }
+        public List<Carrito> Carritos { get; set; }
 
     }
 }

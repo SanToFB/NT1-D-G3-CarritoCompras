@@ -1,5 +1,6 @@
 ﻿using CarritoCompras_NT1.DataBase;
 using CarritoCompras_NT1.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +22,10 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // GET: CarritoItems
-        public async Task<IActionResult> Index(Guid? id)
+        [Authorize(Roles = nameof(Rol.Cliente))]
+        public IActionResult Index(Guid? id)
         {
-            
+
             var clienteId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Carrito carrito = null;
             if (id == null)
@@ -35,77 +37,51 @@ namespace CarritoCompras_NT1.Controllers
                 carrito = _context.Carritos.FirstOrDefault(car => car.ClienteID == clienteId && car.Id == id);
             }
 
-            if (carrito== null)
+            if (carrito == null)
             {
                 return NotFound();
             }
-            
 
             var items = _context.CarritoItems.Include(c => c.Carrito)
                 .Include(c => c.Producto)
-                .Where(c => c.CarritoID == carrito.Id);
+                .Where(c => c.CarritoID == carrito.Id).ToList();
 
             float total = 0;
             foreach (CarritoItem item in items)
             {
+                var prod = _context.Productos.Find(item.ProductoID);
+                item.ValorUnitario = prod.PrecioVigente;
+                item.Subtotal = item.ValorUnitario * item.Cantidad;
                 total += item.Subtotal;
             }
 
             ViewBag.CarritoId = carrito.Id;
             ViewBag.Total = total;
-            return View(await items.ToListAsync());
+            return View(items);
         }
 
-        // GET: CarritoItems/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        /* // GET: CarritoItems/Details/5
+         public async Task<IActionResult> Details(Guid? id)
+         {
+             if (id == null)
+             {
+                 return NotFound();
+             }
 
-            var carritoItem = await _context.CarritoItems
-                .Include(c => c.Carrito)
-                .Include(c => c.Producto)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (carritoItem == null)
-            {
-                return NotFound();
-            }
+             var carritoItem = await _context.CarritoItems
+                 .Include(c => c.Carrito)
+                 .Include(c => c.Producto)
+                 .FirstOrDefaultAsync(m => m.Id == id);
+             if (carritoItem == null)
+             {
+                 return NotFound();
+             }
 
-            return View(carritoItem);
-        }
+             return View(carritoItem);
+         }*/
 
-        /*
-
-        // GET: CarritoItems/Create
-        public IActionResult Create()
-        {
-            ViewData["CarritoID"] = new SelectList(_context.Carritos, "Id", "Id");
-            ViewData["ProductoID"] = new SelectList(_context.Productos, "Id", "Descripcion");
-            return View();
-        }
-
-        // POST: CarritoItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Activo,CarritoID,ProductoID,Cantidad,ValorUnitario,Subtotal")] CarritoItem carritoItem)
-        {
-            if (ModelState.IsValid)
-            {
-                carritoItem.Id = Guid.NewGuid();
-                _context.Add(carritoItem);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CarritoID"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoID);
-            ViewData["ProductoID"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoID);
-            return View(carritoItem);
-        }
-
-        // GET: CarritoItems/Edit/5
+        //GET: CarritoItems/Edit/5
+        [Authorize(Roles = nameof(Rol.Cliente))]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -114,21 +90,25 @@ namespace CarritoCompras_NT1.Controllers
             }
 
             var carritoItem = await _context.CarritoItems.FindAsync(id);
+
             if (carritoItem == null)
             {
                 return NotFound();
             }
-            ViewData["CarritoID"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoID);
-            ViewData["ProductoID"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoID);
+
+            var prod = _context.Productos.Find(carritoItem.ProductoID);
+            carritoItem.ValorUnitario = prod.PrecioVigente;
+            carritoItem.Subtotal = prod.PrecioVigente * carritoItem.Cantidad;
+            //ViewData["CarritoID"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoID);
+            //ViewData["ProductoID"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoID);
             return View(carritoItem);
         }
 
-        // POST: CarritoItems/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //POST: CarritoItems/Edit/5
+        [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Activo,CarritoID,ProductoID,Cantidad,ValorUnitario,Subtotal")] CarritoItem carritoItem)
+        public IActionResult Edit(Guid id, CarritoItem carritoItem)
         {
             if (id != carritoItem.Id)
             {
@@ -137,10 +117,18 @@ namespace CarritoCompras_NT1.Controllers
 
             if (ModelState.IsValid)
             {
+                if (carritoItem.Cantidad <= 0)
+                {
+                    ViewBag.Error = "El carrito se encuentra vacio.";
+                    return View(carritoItem);
+                }
+                Producto producto = _context.Productos.Find(carritoItem.ProductoID);
+                carritoItem.Subtotal = carritoItem.Cantidad * producto.PrecioVigente;
+
                 try
                 {
                     _context.Update(carritoItem);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -153,16 +141,26 @@ namespace CarritoCompras_NT1.Controllers
                         throw;
                     }
                 }
+
+                Carrito carrito = _context.Carritos.FirstOrDefault(c => c.Id == carritoItem.CarritoID);
+                var items = _context.CarritoItems.Where(item => item.CarritoID == carrito.Id);
+                foreach(CarritoItem item in items)
+                {
+                carrito.Subtotal += item.Subtotal;
+                }
+
+                _context.Update(carrito);
+                _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CarritoID"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoID);
-            ViewData["ProductoID"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoID);
+            // ViewData["CarritoID"] = new SelectList(_context.Carritos, "Id", "Id", carritoItem.CarritoID);
+            // ViewData["ProductoID"] = new SelectList(_context.Productos, "Id", "Descripcion", carritoItem.ProductoID);
             return View(carritoItem);
         }
 
-        */
-
         // GET: CarritoItems/Delete/5
+        [Authorize(Roles = nameof(Rol.Cliente))]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -183,6 +181,7 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: CarritoItems/Delete/5
+        [Authorize(Roles = nameof(Rol.Cliente))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -206,10 +205,6 @@ namespace CarritoCompras_NT1.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-
-
-
 
         private bool CarritoItemExists(Guid id)
         {

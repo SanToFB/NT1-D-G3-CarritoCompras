@@ -51,15 +51,10 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Administradores/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Administrador administrador, string pass)
         {
-            /*public async Task<IActionResult> Create([Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Administrador administrador)
-            {*/
-
             try
             {
                 pass.ValidarPassword();
@@ -104,12 +99,6 @@ namespace CarritoCompras_NT1.Controllers
         }
 
         // POST: Administradores/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-
-
-        /*public async Task<IActionResult> Edit(Guid id, [Bind("Apellido,Telefono,Direccion,Id,Nombre,Email,FechaAlta,Password,UserName")] Administrador administrador)*/
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, Administrador administrador, string pass)
@@ -125,7 +114,6 @@ namespace CarritoCompras_NT1.Controllers
                     ModelState.AddModelError(nameof(Administrador.Password), e.Message);
                 }
             }
-
 
             if (id != administrador.Id)
             {

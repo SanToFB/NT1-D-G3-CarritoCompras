@@ -34,6 +34,8 @@ namespace CarritoCompras_NT1.Migrations
                 ,"CSantana77", "Santana","4747-2323", "San Lorenzo 1969" }
                 );
 
+            
+
             migrationBuilder.CreateTable(
                 name: "Categorias",
                 columns: table => new
@@ -46,6 +48,34 @@ namespace CarritoCompras_NT1.Migrations
                 {
                     table.PrimaryKey("PK_Categorias", x => x.Id);
                 });
+
+            //Categorias
+
+            migrationBuilder.InsertData(
+                table: "Categorias",
+                columns: new[] { "Id", "Nombre", "Descripcion" },
+                values: new object[] { Guid.NewGuid(), "Shorts", "Shorts/Bikers" }
+                );
+            migrationBuilder.InsertData(
+                table: "Categorias",
+                columns: new[] { "Id", "Nombre", "Descripcion" },
+                values: new object[] { Guid.NewGuid(), "Camisas", "Estampadas, Rayadas y Lisas" }
+                );
+            migrationBuilder.InsertData(
+                table: "Categorias",
+                columns: new[] { "Id", "Nombre", "Descripcion" },
+                values: new object[] { Guid.NewGuid(), "Abrigos", "Sweaters, Buzos, Chalecos" }
+                );
+            migrationBuilder.InsertData(
+                table: "Categorias",
+                columns: new[] { "Id", "Nombre", "Descripcion" },
+                values: new object[] { Guid.NewGuid(), "Pantalones", "Pantalones, Babuchas y Calzas" }
+                );
+            migrationBuilder.InsertData(
+                table: "Categorias",
+                columns: new[] { "Id", "Nombre", "Descripcion" },
+                values: new object[] { Guid.NewGuid(), "Polleras", "Polleras 100% algodon" }
+                );
 
             migrationBuilder.CreateTable(
                 name: "Clientes",

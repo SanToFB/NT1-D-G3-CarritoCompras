@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarritoCompras_NT1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220130230031_primeraVersion")]
+    [Migration("20220208035925_primeraVersion")]
     partial class primeraVersion
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -346,7 +346,7 @@ namespace CarritoCompras_NT1.Migrations
             modelBuilder.Entity("CarritoCompras_NT1.Models.Carrito", b =>
                 {
                     b.HasOne("CarritoCompras_NT1.Models.Cliente", "Cliente")
-                        .WithMany()
+                        .WithMany("Carritos")
                         .HasForeignKey("ClienteID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

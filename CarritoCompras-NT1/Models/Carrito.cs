@@ -16,6 +16,7 @@ namespace CarritoCompras_NT1.Models
         public Guid ClienteID { get; set; }
         public Cliente Cliente { get; set; }
 
+
         public List<CarritoItem> CarritoItems { get; set; }
 
 
